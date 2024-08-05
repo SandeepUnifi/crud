@@ -11,6 +11,8 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+// import { Input } from "./input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +33,8 @@ import AddUser from "./AddUser";
 import ConfirmationDialog from "./ConfirmationDialog";
 import EditUserDetail from "./UserAction/EditUserDetail";
 import AssignRoles from "./UserAction/AssignUserRole";
-// import AssignRoles from "./UserAction/AssignRoles";
+import EditPassword from "./UserAction/EditPassword";
+// import EditPassword from "./EditPassword"; // Import the EditPassword component
 
 const initialUsers = [
   {
@@ -99,7 +102,6 @@ export type User = {
   createdOn: string;
   updatedOn: string;
 };
-
 export function UserRbac() {
   const [data, setData] = useState<User[]>(initialUsers);
   const [roles, setRoles] = useState(initialRoles);
@@ -111,6 +113,7 @@ export function UserRbac() {
   const [isAssignRolesOpen, setIsAssignRolesOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [isEditPasswordOpen, setIsEditPasswordOpen] = useState(false); // State for Edit Password modal
 
   const handleAddUser = (newUser: User) => {
     setData((prevData) => [...prevData, newUser]);
@@ -144,6 +147,19 @@ export function UserRbac() {
     setIsConfirmDialogOpen(false);
   };
 
+  const handleEditPassword = () => {
+    setIsEditPasswordOpen(true); // Open Edit Password modal
+  };
+
+  const savePassword = () => {
+    // Handle save logic here (e.g., API call)
+    setIsEditPasswordOpen(false);
+  };
+
+  const cancelPasswordEdit = () => {
+    setIsEditPasswordOpen(false);
+  };
+
   const handleAssignRoles = (userId: string) => {
     setSelectedUser(userId);
     setIsAssignRolesOpen(true);
@@ -158,6 +174,7 @@ export function UserRbac() {
   };
 
   const columns: ColumnDef<User>[] = [
+    // ... (same as before)
     {
       accessorKey: "firstName",
       header: "First Name",
@@ -223,9 +240,7 @@ export function UserRbac() {
               >
                 Edit Details
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => alert(`Edit Password for ${user.id}`)}
-              >
+              <DropdownMenuItem onClick={handleEditPassword}>
                 Edit Password
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleAssignRoles(user.id)}>
@@ -299,11 +314,8 @@ export function UserRbac() {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
+                <TableCell colSpan={columns.length}>
+                  No data available
                 </TableCell>
               </TableRow>
             )}
@@ -336,6 +348,13 @@ export function UserRbac() {
           selectedRoles={selectedRoles}
           onRoleSelect={handleRoleSelection}
           onClose={() => setIsAssignRolesOpen(false)}
+        />
+      )}
+      {isEditPasswordOpen && (
+        <EditPassword
+          isOpen={isEditPasswordOpen}
+          onClose={cancelPasswordEdit}
+          onSave={savePassword}
         />
       )}
     </div>
