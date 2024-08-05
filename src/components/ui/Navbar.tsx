@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
             User RBAC
           </NavLink>
           <NavLink
-            to="/permissions"
+            to="/roles"
             className={({ isActive }) =>
               isActive
                 ? "text-white border-b-2 border-indigo-500"
@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
             Roles
           </NavLink>
           <NavLink
-            to="/roles"
+            to="/permissions"
             className={({ isActive }) =>
               isActive
                 ? "text-white border-b-2 border-indigo-500"
@@ -46,6 +46,16 @@ const Navbar: React.FC = () => {
             }
           >
             Permissions
+          </NavLink>
+          <NavLink
+            to="/rolet"
+            className={({ isActive }) =>
+              isActive
+                ? "text-white border-b-2 border-indigo-500"
+                : "text-gray-300 hover:text-white"
+            }
+          >
+            Role-Test
           </NavLink>
         </div>
       </div>

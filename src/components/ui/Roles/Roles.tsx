@@ -28,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import AddRole from "./AddRole";
-import ConfirmationDialog from "./ConfirmationDialog"; // Assuming ConfirmationDialog is in the same directory
+import ConfirmationDialog from "../ConfirmationDialog";
 
 const initialData: Role[] = [
   {
