@@ -7,6 +7,7 @@ import Navbar from "./Navbar";
 // import { Roles } from "./Roles";
 import { Permissions } from "./Permission/Permissions";
 import { Roles } from "./Roles/Roles";
+import { Rolet } from "./Roles/RolesT";
 
 const AllRoute: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const AllRoute: React.FC = () => {
           <Route path="/user" element={<UserRbac />} />
           <Route path="/permissions" element={<Permissions />} />
           <Route path="/roles" element={<Roles />} />
+          <Route path="/rolet" element={<Rolet />} />
         </Routes>
       </div>
     </div>
