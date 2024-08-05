@@ -147,7 +147,7 @@ export function UserTable() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   React.useEffect(() => {
-    fetch("http://localhost:8085/users")
+    fetch("http://localhost:8000/users")
       .then((response) => response.json())
       .then((data) => setData(data))
       .catch((error) => console.error("Error fetching data: ", error));

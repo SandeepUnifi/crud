@@ -3,8 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import { UserTable } from "./UserTable";
 import { UserRbac } from "./userRbac";
 import Navbar from "./Navbar";
-import { Permissions } from "./Permissions";
-import { Roles } from "./Roles";
+// import { Permissions } from "./Permissions";
+// import { Roles } from "./Roles";
+import { Permissions } from "./Permission/Permissions";
+import { Roles } from "./Roles/Roles";
 
 const AllRoute: React.FC = () => {
   return (
