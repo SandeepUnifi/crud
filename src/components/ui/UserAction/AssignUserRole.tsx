@@ -8,7 +8,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from "lucide-react"; // Ensure these icons are imported
+import { Plus, Minus } from "lucide-react";
+import "./AssignUserRole.module.css";
 
 type Role = {
   id: string;
@@ -39,69 +40,82 @@ const initialRoles: Role[] = [
   },
 ];
 
-const AssignRoles: React.FC = () => {
-  const [roles, setRoles] = useState<Role[]>(initialRoles);
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+interface AssignRolesProps {
+  roles: Role[];
+  selectedRoles: string[];
+  onRoleSelect: (roleId: string) => void;
+  onClose: () => void;
+}
 
-  const handleToggleRole = (roleId: string) => {
-    setSelectedRoles((prevSelected) =>
-      prevSelected.includes(roleId)
-        ? prevSelected.filter((id) => id !== roleId)
-        : [...prevSelected, roleId]
-    );
-  };
+const AssignRoles: React.FC<AssignRolesProps> = ({
+  roles = initialRoles,
+  selectedRoles,
+  onRoleSelect,
+  onClose,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredRoles = roles.filter((role) =>
     role.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center py-4">
-        <h1 className="text-xl font-semibold">ADD</h1>
-        <input
-          type="text"
-          placeholder="Search roles..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="border p-2 rounded max-w-sm"
-        />
-      </div>
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Action</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredRoles.length ? (
-              filteredRoles.map((role) => (
-                <TableRow key={role.id}>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleToggleRole(role.id)}
-                    >
-                      {selectedRoles.includes(role.id) ? <Minus /> : <Plus />}
-                    </Button>
-                  </TableCell>
-                  <TableCell>{role.name}</TableCell>
-                  <TableCell>{role.description}</TableCell>
-                </TableRow>
-              ))
-            ) : (
+    <div className="modal modal-z-index">
+      <div className="modal-content ">
+        <div className="flex justify-between items-center py-4">
+          <h1 className="text-xl font-semibold">ADD</h1>
+          <input
+            type="text"
+            placeholder="Search roles..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border p-2 rounded max-w-sm"
+          />
+        </div>
+        <div className="rounded-md border overflow-x-auto">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={3} className="h-24 text-center">
-                  No roles found.
-                </TableCell>
+                <TableHead>Action</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Description</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredRoles.length ? (
+                filteredRoles.map((role) => (
+                  <TableRow key={role.id}>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        onClick={() => onRoleSelect(role.id)}
+                      >
+                        {selectedRoles.includes(role.id) ? (
+                          <Minus className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableCell>
+                    <TableCell>{role.name}</TableCell>
+                    <TableCell>{role.description}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="h-24 text-center">
+                    No roles found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+        </div>
       </div>
     </div>
   );
