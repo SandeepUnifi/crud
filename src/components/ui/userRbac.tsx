@@ -28,49 +28,62 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import AddUser from "./AddUser";
-import ConfirmationDialog from "./ConfirmationDialog"; // Import the ConfirmationDialog component
+import ConfirmationDialog from "./ConfirmationDialog";
+import EditUserDetail from "./UserAction/EditUserDetail";
+import AssignRoles from "./UserAction/AssignUserRole";
+// import AssignRoles from "./UserAction/AssignRoles";
 
-const initialData: User[] = [
+const initialUsers = [
   {
     id: "1",
     firstName: "John",
     lastName: "Doe",
-    username: "johndoe",
-    email: "john.doe@example.com",
+    username: "jdoe",
+    email: "jdoe@example.com",
     phone: "123-456-7890",
-    timezone: "GMT-5",
+    timezone: "UTC",
     createdBy: "admin",
     isDisabled: false,
-    createdOn: "2023-01-01",
-    updatedOn: "2023-01-10",
+    createdOn: "2024-01-01",
+    updatedOn: "2024-02-01",
   },
   {
     id: "2",
-    firstName: "Alice",
-    lastName: "Johnson",
-    username: "alicejohnson",
-    email: "alice.johnson@example.com",
+    firstName: "Jane",
+    lastName: "Smith",
+    username: "jsmith",
+    email: "jsmith@example.com",
     phone: "123-456-7891",
-    timezone: "GMT-5",
+    timezone: "UTC",
     createdBy: "admin",
     isDisabled: false,
-    createdOn: "2023-01-02",
-    updatedOn: "2023-01-11",
+    createdOn: "2024-01-05",
+    updatedOn: "2024-02-05",
+  },
+  // Add more users if needed
+];
+
+const initialRoles = [
+  {
+    id: "1",
+    name: "Access Control",
+    description: "Having complete access",
+  },
+  {
+    id: "2",
+    name: "Editor",
+    description: "Can edit content",
   },
   {
     id: "3",
-    firstName: "Bob",
-    lastName: "Williams",
-    username: "bobwilliams",
-    email: "bob.williams@example.com",
-    phone: "123-456-7892",
-    timezone: "GMT-5",
-    createdBy: "admin",
-    isDisabled: false,
-    createdOn: "2023-01-03",
-    updatedOn: "2023-01-12",
+    name: "Viewer",
+    description: "Can view content",
   },
-  // Add more sample users as needed
+  {
+    id: "4",
+    name: "Moderator",
+    description: "Can moderate content",
+  },
 ];
 
 export type User = {
@@ -88,14 +101,27 @@ export type User = {
 };
 
 export function UserRbac() {
-  const [data, setData] = useState<User[]>(initialData);
+  const [data, setData] = useState<User[]>(initialUsers);
+  const [roles, setRoles] = useState(initialRoles);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isEditUserOpen, setIsEditUserOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
+  const [isAssignRolesOpen, setIsAssignRolesOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
   const handleAddUser = (newUser: User) => {
     setData((prevData) => [...prevData, newUser]);
     setIsAddUserOpen(false);
+  };
+
+  const handleEditUser = (updatedUser: User) => {
+    setData((prevData) =>
+      prevData.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    );
+    setIsEditUserOpen(false);
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -116,6 +142,19 @@ export function UserRbac() {
   const cancelDelete = () => {
     setUserToDelete(null);
     setIsConfirmDialogOpen(false);
+  };
+
+  const handleAssignRoles = (userId: string) => {
+    setSelectedUser(userId);
+    setIsAssignRolesOpen(true);
+  };
+
+  const handleRoleSelection = (roleId: string) => {
+    setSelectedRoles((prevSelected) =>
+      prevSelected.includes(roleId)
+        ? prevSelected.filter((id) => id !== roleId)
+        : [...prevSelected, roleId]
+    );
   };
 
   const columns: ColumnDef<User>[] = [
@@ -149,8 +188,8 @@ export function UserRbac() {
     },
     {
       accessorKey: "isDisabled",
-      header: "Is Disabled",
-      cell: ({ row }) => (row.original.isDisabled ? "Yes" : "No"),
+      header: "Status",
+      cell: ({ row }) => (row.original.isDisabled ? "Disabled" : "Active"),
     },
     {
       accessorKey: "createdOn",
@@ -177,7 +216,10 @@ export function UserRbac() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => alert(`Edit Details for ${user.id}`)}
+                onClick={() => {
+                  setUserToEdit(user);
+                  setIsEditUserOpen(true);
+                }}
               >
                 Edit Details
               </DropdownMenuItem>
@@ -186,9 +228,7 @@ export function UserRbac() {
               >
                 Edit Password
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => alert(`Assign Roles for ${user.id}`)}
-              >
+              <DropdownMenuItem onClick={() => handleAssignRoles(user.id)}>
                 Assign Roles
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -276,12 +316,26 @@ export function UserRbac() {
           onClose={() => setIsAddUserOpen(false)}
         />
       )}
+      {isEditUserOpen && userToEdit && (
+        <EditUserDetail
+          onClose={() => setIsEditUserOpen(false)}
+          initialData={userToEdit}
+        />
+      )}
       {isConfirmDialogOpen && (
         <ConfirmationDialog
           isOpen={isConfirmDialogOpen}
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
           message="Please confirm to delete the record."
+        />
+      )}
+      {isAssignRolesOpen && selectedUser && (
+        <AssignRoles
+          roles={roles}
+          selectedRoles={selectedRoles}
+          onRoleSelect={handleRoleSelection}
+          onClose={() => setIsAssignRolesOpen(false)}
         />
       )}
     </div>
