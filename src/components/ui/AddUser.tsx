@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 type AddUserProps = {
@@ -24,7 +23,7 @@ const AddUser: React.FC<AddUserProps> = ({ onAddUser, onClose }) => {
     phone: "",
     timezone: "",
     password: "",
-    role: "",
+    usertype: "",
   });
 
   const handleChange = (
@@ -94,16 +93,16 @@ const AddUser: React.FC<AddUserProps> = ({ onAddUser, onClose }) => {
             required
           />
           <div>
-            <label htmlFor="role">Role:</label>
+            <label htmlFor="usertype">User Type:</label>
             <select
-              name="role"
-              value={formData.role}
+              name="usertype"
+              value={formData.usertype}
               onChange={handleChange}
               required
               className="w-full p-2 border border-gray-300 rounded-md"
             >
               <option value="" disabled>
-                Select a role
+                Select User Type
               </option>
               <option value="PCP">PCP</option>
               <option value="Reviewer">Reviewer</option>
